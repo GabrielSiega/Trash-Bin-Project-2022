@@ -5,8 +5,8 @@
 #include <FirebaseArduino.h>
 
 // Set these to run example.
-#define FIREBASE_HOST "speedy-nodemcu.firebaseio.com"
-#define FIREBASE_AUTH "A1Az2TkGnSyTjHxK7EPTEYZRNi4nPE3L1yCtnamA"
+//#define FIREBASE_HOST "speedy-nodemcu.firebaseio.com"
+//#define FIREBASE_AUTH "A1Az2TkGnSyTjHxK7EPTEYZRNi4nPE3L1yCtnamA"
 #define WIFI_SSID "Aviavatar"
 #define WIFI_PASSWORD "qwertyui"
 
