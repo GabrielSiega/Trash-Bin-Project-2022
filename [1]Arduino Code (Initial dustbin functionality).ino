@@ -1,120 +1,143 @@
-#include <Servo.h>   //servo library
-Servo servo;  
-int servoPin = 8;
-#define trigPin1 A1
-#define echoPin1 A0
-#define trigPin2 A3
-#define echoPin2 A2
-#define trigPin3 A5
-#define echoPin3 A4
-int ALARM = 7;
+#define BLYNK_PRINT Serial
+#include<DHT.h>
+#include<WiFi.h>
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
+
+char auth[] = "ZwuV8unD9nmWfab2XDdSwVdpqGNH6p7D";
+String apiKey ="V0XWFN7SRQTUPGEL";
+const char *ssid= "STAVA";
+const char *pass= "ZASTAVA1";
+const char *server= "api.thingspeak.com";
+
+const int trigPin = 12;
+const int echoPin = 14;
+#define DHTPIN 16      // What digital pin we're connected to DHT11
+DHT dht(DHTPIN, DHT11);
+const int ledRed = 26; // temperature's led
+const int ledGreen = 27; // Distance's led
+WiFiClient client;
+long duration;
+int distance;
+void setup(){
+  pinMode(trigPin,OUTPUT); // Sets the trigpin as an output
+  pinMode(echoPin,INPUT); // Sets the echoPin as an Input
+  pinMode(ledRed,OUTPUT); // temperature's LED
+  pinMode(ledGreen,OUTPUT);// Distance's LED
+  Serial.begin(115200);//Starts the serial communication
+  Blynk.begin(auth, ssid, pass);
+  delay(100);
+  dht.begin();
+  Serial.println("Connecting to");
+  Serial.println(ssid);
+  WiFi.begin(ssid,pass);
+  while (WiFi.status()!=WL_CONNECTED)
+  {
+    delay(1000);
+    Serial.print(".");
+  }
+    Serial.println("");
+    Serial.println("WiFi connected");
+  }
+ void loop(){
+  float h =dht.readHumidity();
+  float t =dht.readTemperature();
+  WidgetLCD lcd(V2);
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds (2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds (10);
+  digitalWrite(trigPin, LOW);// Reads the echopin, returns the sound wave travel time in microseconds
+  duration=pulseIn(echoPin,HIGH);//calculating the distance
+  distance=duration*0.034/2;//Prints the distance on the Serial Monitor
+  Serial.print("Distance:");
+  Serial.print(distance);
+  
+      if (isnan(h) || isnan(t))
+           {
+              Serial.println("Failed to read from DHT sensor!");
+               return;
+           }
+           
+           if(client.connect(server,80))
+           {
+                String postStr = apiKey;
+                postStr +="&field1=";
+                postStr += String(t);
+                postStr +="&field2=";
+                postStr += String(h);
+                postStr +="&field3=";
+                postStr += String(distance);                
+                postStr +="\r\n\r\n";
+               
+                client.print("POST /update HTTP/1.1\n");
+                client.print("Host: api.thingspeak.com\n");
+                client.print("Connection: close\n");
+                client.print("X-THINGSPEAKAPIKEY: "+apiKey+"\n");
+                client.print("Content-Type: application/x-www-form-urlencoded\n");
+                client.print("Content-Length: ");
+                client.print(postStr.length());
+                client.print("\n\n");
+                client.print(postStr);
+
+                delay(500);
+
+                Serial.print("Temperature: ");
+                Serial.print(t);
+                Serial.print(" degrees Celcius, Humidity: ");
+                Serial.print(h);
+                Serial.print("distance: ");
+                Serial.print(distance);
+
+                delay(500);
+
+                Serial.print("Temperature: ");
+                Serial.print(t);
+                Serial.print(" degrees Celcius, Humidity: ");
+                Serial.print(h);
+                Serial.print("distance: ");
+                Serial.print(distance);             
+                Serial.print("%. Send to Thingspeak.");
+
+            }
+  client.stop();
+
+  Serial.println("Waiting...");
+
+//12thbn3245 64 thingspeak needs minimum 15 sec delay between updates, i've set it to 30 seconds
+  delay(1000);
+  if (distance< 10){
+    digitalWrite(ledGreen,HIGH);
+    lcd.clear();
+    lcd.print(0,0, "The Bin is Full");
+    delay(1000);
+   }
+   else{
+    digitalWrite(ledGreen,LOW);
+    lcd.clear();
+    lcd.print(0,0, "The Bin is empty");
+    delay(1000);
+   }
+  
+   if (t>28){  
+  digitalWrite(ledRed,HIGH);
+  lcd.clear();
+  lcd.print(0,0, "The Bin is Overheated");
+  delay(1000);
+   }
+  else{
+       digitalWrite(ledRed,LOW);
+  lcd.clear();
+    lcd.print(0,0, "      ");
+    delay(1000);
+  }
+  Blynk.virtualWrite(V0,distance);
+  Blynk.virtualWrite(V1,t);
+  Blynk.run();
+}           
+                
+  
+  
 
 
-#define LEDbluemove 13
-#define LEDGreenquarterfull 12
-#define LEDYellow2quartfull 11
-#define LEDOrange3quartfull 10
-#define LEDRedfull 9
-
-
-
-long duration, distance, FIRSTSensor,SECONDSensor,THIRDSensor;
-void setup()
-{
-
-Serial.begin (9600);
  
-servo.attach(servoPin);   
-
-pinMode(trigPin1, OUTPUT);
-pinMode(echoPin1, INPUT);
-pinMode(trigPin2, OUTPUT);
-pinMode(echoPin2, INPUT);
-pinMode(trigPin3, OUTPUT);
-pinMode(echoPin3, INPUT);
-pinMode(ALARM, OUTPUT);
-digitalWrite(ALARM, LOW);
-
-servo.write(0);         //close cap on power on
-delay(100);
-servo.detach();
-  
-  
-  
-//int LEDbluemove = 4;          //Leds
-//int LEDGreenquarterfull = 3;
-//int LEDYellow2quartfull = 2;
-//int LEDOrange3quartfull = A5;
-//int LEDRedfull = A4;  
-  
-  
-  
-pinMode(LEDbluemove,OUTPUT);  
-pinMode(LEDGreenquarterfull,OUTPUT);   
-pinMode(LEDYellow2quartfull,OUTPUT);   
-pinMode(LEDOrange3quartfull,OUTPUT);   
-pinMode(LEDRedfull,OUTPUT);   
-  
-  
-}
-
-void loop() 
-{
-/////////////////////////////////////////////////////// 
-SonarSensor(trigPin1, echoPin1);
-FIRSTSensor = distance;
-SonarSensor(trigPin2, echoPin2);
-SECONDSensor = distance;
-SonarSensor(trigPin3, echoPin3);
-THIRDSensor = distance;
-/////////////////////////////////////////////////////////////
-digitalWrite(ALARM, LOW);
-//////////////////////////////////////////////////////////////////////////////////////
-Serial.print("S1:");Serial.println(FIRSTSensor); delayMicroseconds(10000);
-Serial.print("S2:");Serial.println(SECONDSensor);delayMicroseconds(10000);
-Serial.print("S3:");Serial.println(THIRDSensor); delayMicroseconds(10000);
-///////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////
-if((FIRSTSensor >= 10) & (FIRSTSensor <= 50)) 
-{digitalWrite(ALARM, HIGH);delay(1000); servo.attach(servoPin);
-  delay(1);
- servo.write(0);  
- delay(3000);                       ////LID SENSOR/////!
- servo.write(150);    
- delay(1000);
- servo.detach();
-digitalWrite( LEDbluemove, HIGH);
-Serial.println("Blue ON"); 
-}
-else 
-{
-digitalWrite( LEDbluemove, LOW);
-Serial.println("Blue ON");
-}  
-  
-  
-//// IGNORE "1st Volume Sensor & 2nd Volume sunsor" -2/2/22 
-///////////////////////////////////////////////////////
-
-  
-if((SECONDSensor >= 10) & (SECONDSensor <= 50)) //May Use 1 for ESP32
- {digitalWrite(ALARM, HIGH);delay(1000);}
-///////////////////////////////////////////////////////
-
-  
-if((THIRDSensor >= 10) & (THIRDSensor <= 50))   //May Not be necessary
-{digitalWrite(ALARM, HIGH);delay(1000);}
-///////////////////////////////////////////////////////
-}
-/////////////////////////////////////////////////////////////////////////////////
-void SonarSensor(int trigPin,int echoPin)
-{
-digitalWrite(trigPin, LOW);
-delayMicroseconds(2);
-digitalWrite(trigPin, HIGH);
-delayMicroseconds(10);
-digitalWrite(trigPin, LOW);
-duration = pulseIn(echoPin, HIGH);
-distance = (duration/2) / 29.1;
-}
