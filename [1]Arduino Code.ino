@@ -3,14 +3,8 @@ Servo servo;
 int servoPin = 7;
 #define trigPin1 A1
 #define echoPin1 A0
-
 int ALARM = 8; //Built in Piezo (Arduino Maker)
-
-
 #define LEDbluemove 13
-
-
-
 
 long duration, distance, FIRSTSensor,SECONDSensor,THIRDSensor;
 void setup()
@@ -30,16 +24,8 @@ servo.write(0);         //close cap on power on
 delay(100);
 servo.detach();
   
-  
-  
- 
-  
-  
-  
 pinMode(LEDbluemove,OUTPUT);  
    
-  
-  
 }
 
 void loop() 
@@ -84,11 +70,6 @@ delay(1000);
 Serial.println("Blue ON");
 }  
   
-  
-
-
-  
-
 
 }
 
