@@ -4,7 +4,7 @@ Sensor 2: Real time trash temperature...[2]
 
 
 Action: (Priority)
-Indicator: Mobile apps: empty, gald-fill, full etc.[1]
+Indicator: Mobile apps: empty, half-fill, full etc.[1]
 Notification: Bin is full[1]
 
 Indicator: Mobile apps: display temperature[2]
