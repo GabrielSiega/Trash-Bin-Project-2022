@@ -42,7 +42,7 @@ void setup(){
  void loop(){
   float h =dht.readHumidity();
   float t =dht.readTemperature();
-  WidgetLCD lcd(V2);
+  WidgetLCD lcd(V2);               //LCD V2 Pin
   digitalWrite(trigPin, LOW);
   delayMicroseconds (2);
   digitalWrite(trigPin, HIGH);
@@ -106,7 +106,7 @@ void setup(){
 
 //12thbn3245 64 thingspeak needs minimum 15 sec delay between updates, i've set it to 30 seconds
   delay(1000);
-  if (distance< 10){
+  if (distance< 10/){
     digitalWrite(ledGreen,HIGH);
     lcd.clear();
     lcd.print(0,0, "The Bin is Full");
@@ -131,7 +131,7 @@ void setup(){
     lcd.print(0,0, "      ");
     delay(1000);
   }
-  Blynk.virtualWrite(V0,distance);
-  Blynk.virtualWrite(V1,t);
+  Blynk.virtualWrite(V0,distance);  //Volume in bin (CM)
+  Blynk.virtualWrite(V1,t);         //Ambient Temperature (Deg C)
   Blynk.run();
-}        
+}  
