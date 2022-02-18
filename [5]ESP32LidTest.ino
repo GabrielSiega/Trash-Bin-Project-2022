@@ -18,6 +18,8 @@
 #define SERVO_PIN 26  // ESP32 pin GIOP26 connected to Servo Motor's pin
 #define DISTANCE_THRESHOLD  50 // centimeters
 const int ledBlue = 27; // Lid led
+int ALARM = 14; //Built in Piezo (Arduino Maker)
+
 
 Servo servo; // create servo object to control a servo
 
@@ -25,8 +27,9 @@ Servo servo; // create servo object to control a servo
 float duration_us, distance_cm;
 
 void setup() {
-
- pinMode(ledBlue, OUTPUT);   // Humdity's LED
+pinMode(ALARM, OUTPUT);
+digitalWrite(ALARM, LOW);
+pinMode(ledBlue, OUTPUT);   // Humdity's LED
   
   Serial.begin (9600);       // initialize serial port
   pinMode(TRIG_PIN, OUTPUT); // set ESP32 pin to output mode
@@ -48,9 +51,14 @@ void loop() {
 
   if (distance_cm < DISTANCE_THRESHOLD){
 
-   servo.write(180); // rotate servo motor to 90 degree
-   digitalWrite(ledBlue,HIGH);
-   delay(8000);
+tone(ALARM, 950);  //High pitch 950; Low pitch 450
+delay(1000);
+noTone(ALARM);  //Alarm Buzz for 1 second
+delay(1000); 
+servo.write(180); // rotate servo motor to 90 degree
+digitalWrite(ledBlue,HIGH);
+delay(8000);
+   
   }
   
   else{
