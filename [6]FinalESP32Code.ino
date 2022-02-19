@@ -23,7 +23,9 @@ const int echoPin1 = 26;
 DHT dht(DHTPIN, DHT11);
 const int ledRed = 5; // temperature's led
 const int ledGreen = 17; // Distance's led
-const int ledBlue = 16; // Humidity's led
+const int ledYellow = 16; // Humidity's led
+const int ledBlue = 4; // Lid led
+
 WiFiClient client;
 long duration, distance, duration1, distance1;
 
@@ -34,7 +36,9 @@ void setup(){
   pinMode(echoPin1, INPUT);
   pinMode(ledRed, OUTPUT);// temperature's LED
   pinMode(ledGreen, OUTPUT); // Distance's LED
-  pinMode(ledBlue, OUTPUT);   // Humdity's LED
+  pinMode(ledYellow, OUTPUT);   // Humdity's LED
+  pinMode(ledBlue, OUTPUT);   // Lid LED
+
 
   ESP32PWM::allocateTimer(0);
   ESP32PWM::allocateTimer(1);
@@ -158,7 +162,7 @@ void setup(){
   delay(1000);
   if (distance< 3){
     Blynk.notify("The bin is FULL!"); 
-    digitalWrite(ledGreen,HIGH);
+    digitalWrite(ledGreen,HIGH);                       //Green Led
     lcd.clear();
     lcd.print(0,0, "The Bin is Full");
     delay(1000);
@@ -183,7 +187,7 @@ void setup(){
 
    if (t>40){  
     Blynk.notify("Abnormal Temp!");
-  digitalWrite(ledRed,HIGH);
+  digitalWrite(ledRed,HIGH);                           //Red Led
   lcd.clear();
   lcd.print(0,0, "The Bin is Overheated");
   delay(1000);
@@ -195,14 +199,14 @@ void setup(){
     delay(1000);
   }
   if (h>70){
-    digitalWrite(ledBlue, HIGH);
+    digitalWrite(ledYellow, HIGH);                     //Yellow Led
     lcd.clear();
     lcd.print(0,0, "High Humidity, Remove Trash");
     lcd.print(0,1, "To Prevent Odour");
     delay(1000);
   }
   else {
-    digitalWrite(ledBlue, LOW);
+    digitalWrite(ledYellow, LOW);
     lcd.clear();
     lcd.print(0,0, "Humidity OK");
     delay(1000);
