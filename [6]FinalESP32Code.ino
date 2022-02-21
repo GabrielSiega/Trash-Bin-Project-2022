@@ -11,6 +11,8 @@ char auth[] = "ZwuV8unD9nmWfab2XDdSwVdpqGNH6p7D";
 String apiKey ="Z6WMPT0PZ7YK3F82";
 const char *ssid= "IIoT Center SIM 2.4G";
 const char *pass= "iiot0321";
+//const char *ssid= "Gabriel's iPhone 12Pro Max";
+//const char *pass= "Te@mSieg@2004";
 const char *server= "api.thingspeak.com";
 
 int pos = 0; // variable to store the servo position
@@ -22,7 +24,7 @@ const int echoPin1 = 26;
 #define DHTPIN 27 // What digital pin we're connected to DHT11
 DHT dht(DHTPIN, DHT11);
 const int ledRed = 5; // temperature's led
-const int ledGreen = 17; // Distance's led
+const int ledGreen = 17; // Trash Level led
 const int ledYellow = 16; // Humidity's led
 const int ledBlue = 4; // Lid led
 
@@ -32,7 +34,7 @@ long duration, distance, duration1, distance1;
 void setup(){
   pinMode(trigPin0, OUTPUT); // Sets the trigpin as an output
   pinMode(echoPin0, INPUT); // Sets the echoPin as an Input
-  pinMode(trigPin1, OUTPUT);
+  pinMode(trigPin1, OUTPUT); 
   pinMode(echoPin1, INPUT);
   pinMode(ledRed, OUTPUT);// temperature's LED
   pinMode(ledGreen, OUTPUT); // Distance's LED
@@ -144,15 +146,17 @@ void setup(){
   Serial.println("Waiting...");
 
   if (distance1 <=10) { 
-  delay(1000);
+  
   myservo.attach(servoPin);
   delay(1);
   myservo.write(180);
-  delay(1000);
+  digitalWrite(ledBlue,HIGH);
+   delay(1000);
  }
 
  else {
   myservo.write(0);
+  digitalWrite(ledBlue,LOW);
   delay(1000);
   
  }
@@ -218,7 +222,3 @@ void setup(){
 }           
                 
   
-  
-
-
- 
