@@ -48,6 +48,11 @@ void setup(){
   ESP32PWM::allocateTimer(3);
   myservo.setPeriodHertz(50); // standard 50hz servo
   myservo.attach(servoPin, 500, 2400);
+ // myservo.attach(servoPin);
+ // myservo.write(0);         //close cap on power on
+
+
+  
 
   Serial.begin(115200);//Starts the serial communication
   Blynk.begin(auth, ssid, pass);
@@ -144,22 +149,9 @@ void setup(){
   client.stop();
 
   Serial.println("Waiting...");
+ 
 
-  if (distance1 <=10) { 
   
-  myservo.attach(servoPin);
-  delay(1);
-  myservo.write(180);
-  digitalWrite(ledBlue,HIGH);
-   delay(1000);
- }
-
- else {
-  myservo.write(0);
-  digitalWrite(ledBlue,LOW);
-  delay(1000);
-  
- }
 
 
   // thingspeak needs minimum 15 sec delay between updates, i've set it to 30 seconds
@@ -215,6 +207,20 @@ void setup(){
     lcd.print(0,0, "Humidity OK");
     delay(1000);
   }
+  if  (distance1 >=10) { 
+    digitalWrite(ledBlue,HIGH); 
+    myservo.attach(servoPin);
+    myservo.write(0);    
+    delay(8);
+  
+ }
+
+ else {
+  myservo.write(180);
+  digitalWrite(ledBlue,LOW);
+  
+  
+ }  
   Blynk.virtualWrite(V0,distance);
   Blynk.virtualWrite(V1,t);
   Blynk.virtualWrite(V3,h);
