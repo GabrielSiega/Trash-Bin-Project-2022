@@ -156,7 +156,7 @@ void setup(){
 
   // thingspeak needs minimum 15 sec delay between updates, i've set it to 30 seconds
   delay(1000);
-  if (distance< 3){
+  if (distance <= 3){
     Blynk.notify("The bin is FULL!"); 
     digitalWrite(ledGreen,HIGH);                       //Green Led
     lcd.clear();
@@ -181,7 +181,7 @@ void setup(){
     delay(1000);
    }
 
-   if (t>40){  
+   if (t>20){  
     Blynk.notify("Abnormal Temp!");
   digitalWrite(ledRed,HIGH);                           //Red Led
   lcd.clear();
@@ -194,7 +194,7 @@ void setup(){
     lcd.print(0,0, "Bin Temperature OK");
     delay(1000);
   }
-  if (h>70){
+  if (h>40){
     digitalWrite(ledYellow, HIGH);                     //Yellow Led
     lcd.clear();
     lcd.print(0,0, "High Humidity, Remove Trash");
@@ -207,18 +207,21 @@ void setup(){
     lcd.print(0,0, "Humidity OK");
     delay(1000);
   }
-  if  (distance1 >=10) { 
+  if  (distance1 <=10) { 
     digitalWrite(ledBlue,HIGH); 
+    delay(1000);
     myservo.attach(servoPin);
     myservo.write(0);    
-    delay(8);
+    delay(8000);
   
  }
 
- else {
-  myservo.write(180);
+ else if (distance >10) {
+
   digitalWrite(ledBlue,LOW);
-  
+  delay(1);
+  myservo.write(180);
+  delay(1);
   
  }  
   Blynk.virtualWrite(V0,distance);
