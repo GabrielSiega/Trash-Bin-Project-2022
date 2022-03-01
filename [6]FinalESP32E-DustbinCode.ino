@@ -7,8 +7,8 @@
 
 Servo myservo; // create servo object to control a servo
 
-char auth[] = "ZwuV8unD9nmWfab2XDdSwVdpqGNH6p7D";
-String apiKey ="Z6WMPT0PZ7YK3F82";
+char auth[] = "ZWQbWfvQeMQi0IPRG3LusYlteVkFYkK0";
+String apiKey ="ZP4UTX6BDI9SUAZU";
 const char *ssid= "IIoT Center SIM 2.4G";
 const char *pass= "iiot0321";
 //const char *ssid= "Gabriel's iPhone 12Pro Max";
@@ -156,7 +156,7 @@ void setup(){
 
   // thingspeak needs minimum 15 sec delay between updates, i've set it to 30 seconds
   delay(1000);
-  if (distance <= 3){
+  if (distance <= 4){
     Blynk.notify("The bin is FULL!"); 
     digitalWrite(ledGreen,HIGH);                       //Green Led
     lcd.clear();
@@ -227,6 +227,7 @@ void setup(){
   Blynk.virtualWrite(V0,distance);
   Blynk.virtualWrite(V1,t);
   Blynk.virtualWrite(V3,h);
+  
   Blynk.run();
 }           
                 
